@@ -62,6 +62,7 @@ public class App {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             while(reader.ready()) {
                 sb.append(reader.readLine());
+                sb.append('\n');
             }
             reader.close();
         } catch (Exception e) {
