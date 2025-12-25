@@ -5,55 +5,41 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 public class EncodedList {
-    private ArrayList<CharacterFrequency> characters;
+
+    private HuffmanTree tree;
     private HashMap<Character,String> charToCode = new HashMap<>();
-    private HashMap<String,Character> codeToChar = new HashMap<>();
-    private ArrayList<CharacterCode> codesList = new ArrayList<>();
-    private StringBuilder code = new StringBuilder("0");
-    public EncodedList(ArrayList<CharacterFrequency> characters) {
-        this.characters = characters;
-        encode();
+    public EncodedList(HuffmanTree tree) {
+        this.tree = tree;
+        encode(tree.getRoot(),"");
     }
-    public EncodedList(String header) {
-        encode(header);
-    }
-    public void encode() {
-        for(int i = 0; i < characters.size(); i++){
-            char c =  characters.get(i).getCharacter();
-            charToCode.put(c,code.toString());
-            codeToChar.put(code.toString(),c);
-            codesList.add(new CharacterCode(c,code.toString()));
-            code.deleteCharAt(code.length()-1);
-            code.append("10");
+
+    // NEED TO CHANGE THE STRING ARGUMENT
+    private void encode(TreeNode node,String code) {
+        if (node == null) return;
+        if (node.isLeaf() || node.isEndOfFile()) {
+            charToCode.put(node.getCharacter(), code);
         }
+        encode(node.getLeft(), code + '0');
+        encode(node.getRight(), code + '1');
+
     }
-    public void encode(String s) {
-        String[] pairs = s.split(",");
-        for(int i = 0; i < pairs.length; i++){
-            String[] charCode = pairs[i].split(":");
-            codeToChar.put(charCode[1],charCode[0].toCharArray()[0]);
-        }
-    }
-    public String getEncoding(char c) {
+    public String getEncoding(Character c) {
         if(!charToCode.containsKey(c)){
             throw new NoSuchElementException("No encoded character for "+c);
         }
         return charToCode.get(c);
     }
     public char  getCharacter(String code){
-        if(!codeToChar.containsKey(code)){
-            throw new NoSuchElementException("No encoded character for "+code);
+        TreeNode node = tree.getRoot();
+        for(int i = 0; i < code.length(); i++){
+            char c = code.charAt(i);
+            if(c == '0'){
+                node = node.getLeft();
+            }else {
+                node = node.getRight();
+            }
         }
-        return codeToChar.get(code);
-    }
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < codesList.size() - 1; i++){
-            sb.append(codesList.get(i).toString());
-            sb.append(",");
-        }
-        sb.append(codesList.getLast().toString());
-        return sb.toString();
+        if(node != null) return node.getCharacter();
+        else throw new NoSuchElementException("FUCK YOU NO CHARACTER HERE");
     }
 }

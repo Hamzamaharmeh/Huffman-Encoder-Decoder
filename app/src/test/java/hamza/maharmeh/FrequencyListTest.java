@@ -3,6 +3,7 @@ package hamza.maharmeh;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,24 +11,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FrequencyListTest {
 
     @Test
-    public void testDescendingOrdering() {
+    public void testAcendingOrdering() {
         FrequencyList list = new FrequencyList("bananaa");
-        ArrayList<CharacterFrequency> frequencyList = list.getFrequencyList();
-        for( int i = 0; i < frequencyList.size()-1; i++ ) {
-            assertTrue(frequencyList.get(i).getFrequency() >= frequencyList.get(i+1).getFrequency());
+        PriorityQueue<TreeNode> frequencyList = list.getFrequencyQueue();
+        int min = 0;
+        for(TreeNode node : frequencyList){
+            TreeNode n = frequencyList.poll();
+            assertTrue(n.getWeight() >= min);
+            min = n.getWeight();
         }
     }
     @Test
     public void testFrequencies() {
         FrequencyList list = new FrequencyList("bananaa");
-        ArrayList<CharacterFrequency> frequencyList = list.getFrequencyList();
-        assertEquals(4,frequencyList.get(0).getFrequency());
-        assertEquals(2,frequencyList.get(1).getFrequency());
-        assertEquals(1,frequencyList.get(2).getFrequency());
+        PriorityQueue<TreeNode> frequencyList = list.getFrequencyQueue();
+        assertEquals(1,frequencyList.poll().getWeight());
+        assertEquals(2,frequencyList.poll().getWeight());
+        assertEquals(4,frequencyList.poll().getWeight());
     }
     @Test
     public void testOnEmptyList() {
         FrequencyList list = new FrequencyList("");
-        assertTrue(list.getFrequencyList().isEmpty());
+        assertTrue(list.getFrequencyQueue().isEmpty());
     }
 }
